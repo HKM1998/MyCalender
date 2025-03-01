@@ -1,0 +1,69 @@
+package com.kosmo.mycalender.user.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kosmo.mycalender.common.exception.WrongIdPasswordException;
+import com.kosmo.mycalender.user.dto.LoginCommandDTO;
+import com.kosmo.mycalender.user.dto.UserAuthInfoDTO;
+import com.kosmo.mycalender.user.service.UserAuthService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@Controller
+@RequestMapping("/login")
+public class LoginController {
+	@Autowired
+	private UserAuthService userAuthService;
+
+	public void setUserAuthService(UserAuthService userAuthService) {
+		this.userAuthService = userAuthService;
+	}
+	
+	@GetMapping
+	public String form(Model m, @CookieValue(value = "REMEMBER", required = false) Cookie rCookie) { // required 를 false 로 설정하지 않으면 쿠키 없을때 익셉션
+		if(rCookie != null) {
+			LoginCommandDTO loginCommandDTO = new LoginCommandDTO();
+			loginCommandDTO.setUserId(rCookie.getValue());
+			loginCommandDTO.setRememberId(true);
+			m.addAttribute("loginCommandDTO", loginCommandDTO);
+		}
+		return "login/loginForm";
+	}
+	
+	@PostMapping
+	public String login(@ModelAttribute LoginCommandDTO loginCommandDTO, Errors errors, HttpSession session, HttpServletResponse response) {
+		new LoginCommandValidator().validate(loginCommandDTO, errors);
+		if(errors.hasErrors()) {
+			return "login/loginFrom";
+		}
+		try {
+			UserAuthInfoDTO UserAuthInfoDTO = userAuthService.authenticate(loginCommandDTO.getUserId(), loginCommandDTO.getPassword());
+			session.setAttribute("UserAuthInfoDTO", UserAuthInfoDTO);
+			
+			Cookie rememberCookie = new Cookie("REMEMBER", loginCommandDTO.getUserId());
+			rememberCookie.setPath("/");
+			if(loginCommandDTO.isRememberId()) {
+				rememberCookie.setMaxAge(60 * 60 * 24 * 30);
+			} else {
+				rememberCookie.setMaxAge(0);
+			}
+			response.addCookie(rememberCookie);
+
+			return "redirect:/accountbook";
+		} catch (WrongIdPasswordException e) {
+			errors.reject("idPasswordNotMatching");
+			
+			return "login/loginForm";
+		}
+	}
+}

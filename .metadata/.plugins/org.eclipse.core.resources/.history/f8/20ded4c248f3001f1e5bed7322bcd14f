@@ -1,0 +1,46 @@
+package com.kosmo.mycalender.user.controller;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kosmo.mycalender.common.exception.DuplicateUserException;
+import com.kosmo.mycalender.user.dto.UserRegistRequestDTO;
+import com.kosmo.mycalender.user.service.UserRegistService;
+
+import jakarta.validation.Valid;
+
+
+@Controller
+@RequestMapping("/register")
+public class UserRegistController {
+	@Autowired
+	private UserRegistService userRegistService;
+	
+	@GetMapping
+	public String registerForm(Model m) {
+		return "register/registForm";
+	}
+
+	@PostMapping
+	public String addUser(@ModelAttribute@Valid UserRegistRequestDTO userRegistRequestDTO, Errors errors, Model m) {
+		if(errors.hasErrors())
+			return "register/registForm";
+		
+		try {
+			userRegistService.regist(userRegistRequestDTO);
+			m.addAttribute("userId", userRegistRequestDTO.getUserId());
+			m.addAttribute("name", userRegistRequestDTO.getName());
+			return "register/registFinish";
+		} catch (DuplicateUserException e) {
+			errors.rejectValue("UserID", "duplicate");
+			return "register/registForm";
+		}
+	}
+}

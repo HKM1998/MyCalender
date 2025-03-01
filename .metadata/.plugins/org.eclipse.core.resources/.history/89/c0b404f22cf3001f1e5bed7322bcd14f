@@ -1,0 +1,25 @@
+package user.service;
+
+import exception.WrongIdPasswordException;
+import user.dao.UserDao;
+import user.dto.UserAuthInfoDto;
+import user.dto.UserDto;
+
+public class UserAuthService {
+	private UserDao userDao;
+
+	public void setMemberDao(UserDao userDao) {
+		this.userDao = userDao;
+	}
+	
+	public UserAuthInfoDto authenticate(String userId, String password) {
+		UserDto userDto = userDao.selectByUserId(userId);
+		if(userDto == null) {
+			throw new WrongIdPasswordException();
+		}
+		if(!userDto.getPassword().equals(password)) {
+			throw new WrongIdPasswordException();
+		}
+		return new UserAuthInfoDto(userDto.getUserIdx(), userDto.getUserId(), userDto.getName());
+	}
+}

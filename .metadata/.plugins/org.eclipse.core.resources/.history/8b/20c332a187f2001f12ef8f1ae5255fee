@@ -1,0 +1,77 @@
+package com.kosmo.mycalender.account.repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import com.kosmo.mycalender.account.dto.AccountBookDTO;
+
+@Repository
+public class AccountBookDAO {
+	private JdbcTemplate jdbcTemplate;
+	private RowMapper<AccountBookDTO> rowMapper = 
+			new RowMapper<AccountBookDTO>() {
+				
+				@Override
+				public AccountBookDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+					AccountBookDTO accBook = new AccountBookDTO();
+					accBook.setIdx(rs.getLong("idx"));
+					accBook.setDate(rs.getString("date"));
+					accBook.setCategory(rs.getString("category"));
+					accBook.setDescription(rs.getString("description"));
+					accBook.setDate(rs.getString("date"));
+					accBook.setDate(rs.getString("date"));
+					accBook.setDate(rs.getString("date"));
+					accBook.setDate(rs.getString("date"));
+					return null;
+				}
+			};
+	
+	public AccountBookDAO(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+	
+	public List<AccountBookDTO> findAll() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select IDX, DATE, CATEGORY, DESCRIPTION, AMOUNT, TYPE, USERID, REGDATE from ACCOUNT_BOOK where 1=1 ");
+		
+		return null;
+	}
+
+	public List<AccountBookDTO> findByDate(LocalDate date) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select IDX, DATE, CATEGORY, DESCRIPTION, AMOUNT, TYPE, USERID, REGDATE from ACCOUNT_BOOK where 1=1 ");
+		
+		List<AccountBookDTO> accountList = jdbcTemplate.query(sql.toString(), rowMapper);
+		
+		return null;
+	}
+
+	public AccountBookDTO save(AccountBookDTO record) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public AccountBookDTO findByIdx(Long idx) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select IDX, DATE, CATEGORY, DESCRIPTION, AMOUNT, TYPE, USERID, REGDATE from ACCOUNT_BOOK where 1=1 ");
+		sql.append(" and IDX = ?");
+		
+		return null;
+	}
+
+	public void deleteByIdx(Long idx) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("delete from ACCOUNT_BOOK where 1=1 ");
+		sql.append(" and IDX = ?");
+		
+	}
+
+}

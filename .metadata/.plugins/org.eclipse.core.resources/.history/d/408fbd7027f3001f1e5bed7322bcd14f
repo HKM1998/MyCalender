@@ -1,0 +1,17 @@
+package com.kosmo.mycalender.account.repository;
+
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class CalenderEventDAO {
+	private JdbcTemplate jdbcTemplate;
+
+	public CalenderEventDAO(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource); 
+	}
+	
+	
+}

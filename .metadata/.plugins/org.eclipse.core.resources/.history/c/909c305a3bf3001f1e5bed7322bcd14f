@@ -1,0 +1,65 @@
+package com.kosmo.mycalender.user.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kosmo.mycalender.common.exception.WrongIdPasswordException;
+import com.kosmo.mycalender.user.dto.LoginCommandDTO;
+import com.kosmo.mycalender.user.dto.UserAuthInfoDTO;
+import com.kosmo.mycalender.user.service.UserAuthService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@Controller
+@RequestMapping("/login")
+public class LoginController {
+	@Autowired
+	private UserAuthService userAuthService;
+
+	public void setUserAuthService(UserAuthService userAuthService) {
+		this.userAuthService = userAuthService;
+	}
+	
+	@GetMapping
+	public String form(LoginCommandDTO LoginCommandDTO, @CookieValue(value = "REMEMBER", required = false) Cookie rCookie) { // required 를 false 로 설정하지 않으면 쿠키 없을때 익셉션
+		if(rCookie != null) {
+			LoginCommandDTO.setUserId(rCookie.getValue());
+			LoginCommandDTO.setRememberId(true);
+		}
+		return "login/loginForm";
+	}
+	
+	@PostMapping
+	public String login(LoginCommandDTO LoginCommandDTO, Errors errors, HttpSession session, HttpServletResponse response) {
+		new LoginCommandValidator().validate(LoginCommandDTO, errors);
+		if(errors.hasErrors()) {
+			return "login/loginFrom";
+		}
+		try {
+			UserAuthInfoDTO UserAuthInfoDTO = userAuthService.authenticate(LoginCommandDTO.getUserId(), LoginCommandDTO.getPassword());
+			session.setAttribute("UserAuthInfoDTO", UserAuthInfoDTO);
+			
+			Cookie rememberCookie = new Cookie("REMEMBER", LoginCommandDTO.getUserId());
+			rememberCookie.setPath("/");
+			if(LoginCommandDTO.isRememberId()) {
+				rememberCookie.setMaxAge(60 * 60 * 24 * 30);
+			} else {
+				rememberCookie.setMaxAge(0);
+			}
+			response.addCookie(rememberCookie);
+			return "calender/calender_main";
+			//return "redirect:/accountbook";
+		} catch (WrongIdPasswordException e) {
+			errors.reject("idPasswordNotMatching");
+			
+			return "login/loginForm";
+		}
+	}
+}

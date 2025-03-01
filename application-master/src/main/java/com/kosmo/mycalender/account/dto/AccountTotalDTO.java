@@ -1,0 +1,34 @@
+package com.kosmo.mycalender.account.dto;
+
+import java.math.BigDecimal;
+
+public class AccountTotalDTO {
+	private String type;
+	private BigDecimal totalAmount;
+	private Long count;
+	
+	public AccountTotalDTO(String type, BigDecimal totalAmount, Long count) {
+		this.type = type;
+		this.totalAmount = totalAmount;
+		this.count = count;
+	}
+	
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public BigDecimal getTotalAmount() {
+		return totalAmount;
+	}
+	public void setTotalAmount(BigDecimal totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+	public Long getCount() {
+		return count;
+	}
+	public void setCount(Long count) {
+		this.count = count;
+	}
+}

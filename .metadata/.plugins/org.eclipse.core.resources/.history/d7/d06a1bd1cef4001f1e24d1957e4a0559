@@ -1,0 +1,27 @@
+package com.kosmo.mycalender.account.service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kosmo.mycalender.account.dto.AccountTotalDTO;
+import com.kosmo.mycalender.account.repository.AccountTotalDAO;
+
+
+@Service
+public class AccountTotalService {
+	@Autowired
+	private AccountTotalDAO dao;
+	
+	public List<AccountTotalDTO> getTotal(String userid){
+		List<AccountTotalDTO> list = dao.getTotal(userid);
+		return list;
+	}
+	
+	public List<AccountTotalDTO> getTotalByDate(LocalDate date, String userid){
+		List<AccountTotalDTO> list = dao.getTotalByDate(date, userid);
+		return list;
+	}
+}

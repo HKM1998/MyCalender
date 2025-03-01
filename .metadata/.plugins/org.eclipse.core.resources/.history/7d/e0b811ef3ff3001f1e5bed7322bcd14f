@@ -1,0 +1,59 @@
+package com.kosmo.mycalender.user.controller;
+
+
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.kosmo.mycalender.common.exception.DuplicateUserException;
+import com.kosmo.mycalender.user.dto.UserRegistRequestDTO;
+import com.kosmo.mycalender.user.service.UserRegistService;
+
+import jakarta.validation.Valid;
+
+
+@Controller
+@RequestMapping("/register")
+public class UserRegistController {
+	
+	private UserRegistService userRegistService;
+	
+	public void setUserRegistService(UserRegistService userRegistService) {
+		this.userRegistService = userRegistService;
+	}
+	
+	@GetMapping("/step1")
+	public String handlestep1() {
+		return "register/step1";
+	}
+
+	@PostMapping("/step2")
+	public String handlestep2(@RequestParam(value = "agree", defaultValue = "false") Boolean agree, UserRegistRequestDTO UserRegistRequestDTO) {
+		if(!agree)
+			return "register/step1";
+		
+		return "register/step2";
+	}
+	
+	@GetMapping("/step2")
+	public String handleStep2Get() {
+		return "redirect:/register/step1";
+	}
+	
+	@PostMapping("/step3")
+	public String handleStep3(@Valid UserRegistRequestDTO UserRegistRequestDTO, Errors errors) {
+		if(errors.hasErrors())
+			return "register/step2";
+		
+		try {
+			userRegistService.regist(UserRegistRequestDTO);
+			return "register/step3";
+		} catch (DuplicateUserException e) {
+			errors.rejectValue("email", "duplicate");
+			return "register/step2";
+		}
+	}
+}

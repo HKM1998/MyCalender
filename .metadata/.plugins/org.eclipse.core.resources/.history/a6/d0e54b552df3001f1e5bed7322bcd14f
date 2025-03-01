@@ -1,0 +1,26 @@
+package user.service;
+
+import java.time.LocalDateTime;
+
+import exception.DuplicateUserException;
+import user.dao.UserDao;
+import user.dto.UserDto;
+import user.dto.UserRegistRequestDto;
+
+public class UserRegistService {
+	private UserDao userDao;
+	
+	public UserRegistService(UserDao userDao) {
+		this.userDao = userDao;
+	}
+	
+	public Long regist(UserRegistRequestDto req) {
+		UserDto member = userDao.selectByUserId(req.getUserId());
+		if(member != null) {
+			throw new DuplicateUserException("dup UserId " + req.getUserId());
+		}
+		UserDto newUser = new UserDto(req.getUserId(), req.getPassword(), req.getName(), LocalDateTime.now());
+		userDao.insert(newUser);
+		return newUser.getUserIdx();
+	}
+}

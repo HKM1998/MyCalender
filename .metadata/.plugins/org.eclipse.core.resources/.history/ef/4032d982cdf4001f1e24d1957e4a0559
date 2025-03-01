@@ -1,0 +1,5 @@
+package com.kosmo.mycalender.account.service;
+
+public class AccountTotalService {
+
+}

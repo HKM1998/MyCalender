@@ -1,0 +1,44 @@
+package com.kosmo.mycalender.user.controller;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.kosmo.mycalender.common.exception.DuplicateUserException;
+import com.kosmo.mycalender.user.dto.UserRegistRequestDTO;
+import com.kosmo.mycalender.user.service.UserRegistService;
+
+import jakarta.validation.Valid;
+
+
+@Controller
+@RequestMapping("/register")
+public class UserRegistController {
+	@Autowired
+	private UserRegistService userRegistService;
+	
+	@GetMapping("/step1")
+	public String handlestep1() {
+		return "register/step1";
+	}
+
+	@PostMapping("/step2")
+	public String handlestep2(@ModelAttribute@Valid UserRegistRequestDTO UserRegistRequestDTO, Errors errors) {
+		if(errors.hasErrors())
+			return "register/step1";
+		
+		try {
+			userRegistService.regist(UserRegistRequestDTO);
+			return "register/step2";
+		} catch (DuplicateUserException e) {
+			errors.rejectValue("email", "duplicate");
+			return "register/step1";
+		}
+	}
+}

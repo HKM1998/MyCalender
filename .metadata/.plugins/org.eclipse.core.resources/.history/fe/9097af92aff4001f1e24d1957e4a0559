@@ -1,0 +1,125 @@
+package com.kosmo.mycalender.account.repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import com.kosmo.mycalender.account.dto.AccountBookDTO;
+
+@Repository
+public class AccountBookDAO {
+	private JdbcTemplate jdbcTemplate;
+	private RowMapper<AccountBookDTO> rowMapper = 
+			new RowMapper<AccountBookDTO>() {
+				
+				@Override
+				public AccountBookDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+					AccountBookDTO accBook = new AccountBookDTO(
+							rs.getDate("date")
+							, rs.getString("category")
+							, rs.getString("description")
+							, rs.getBigDecimal("amount")
+							, rs.getString("type")
+							, rs.getString("userid")
+							, rs.getString("regdate"));
+					accBook.setIdx(rs.getLong("idx"));
+					return accBook;
+				}
+			};
+	
+	public AccountBookDAO(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource); 
+	}
+	
+	public List<AccountBookDTO> findAll(String userId) {
+		StringBuilder sql = new StringBuilder();
+		List<AccountBookDTO> accountList;
+		sql.append("select IDX, DATE, CATEGORY, DESCRIPTION, AMOUNT ");
+		sql.append(", case when type = 'INCOME' then '수입' when type = 'EXPENSE' then '지출' end as TYPE ");
+		sql.append(", USERID, REGDATE from ACCOUNT_BOOK where 1=1 ");
+		sql.append("and USERID = ? ");
+		sql.append("order by DATE ");
+
+		accountList = jdbcTemplate.query(sql.toString(), rowMapper, userId);
+		
+		return accountList;
+	}
+	
+	public List<AccountBookDTO> findByDate(LocalDate date, String userId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select IDX, DATE, CATEGORY, DESCRIPTION, AMOUNT ");
+		sql.append(", case when type = 'INCOME' then '수입' when type = 'EXPENSE' then '지출' end as TYPE ");
+		sql.append(", USERID, REGDATE from ACCOUNT_BOOK where 1=1 ");
+		sql.append("and DATE = ? ");
+		sql.append("and USERID = ? ");
+		
+		List<AccountBookDTO> accountList = jdbcTemplate.query(sql.toString(), rowMapper, date, userId);
+		
+		return accountList;
+	}
+
+	public List<AccountBookDTO> findByDateTerm(LocalDate start, LocalDate end, String userId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select IDX, DATE, CATEGORY, DESCRIPTION, AMOUNT ");
+		sql.append(", case when type = 'INCOME' then '수입' when type = 'EXPENSE' then '지출' end as TYPE ");
+		sql.append(", USERID, REGDATE from ACCOUNT_BOOK where 1=1 ");
+		sql.append("and USERID = ? ");
+		sql.append("and DATE between ? and ? ");
+		
+		List<AccountBookDTO> accountList = jdbcTemplate.query(sql.toString(), rowMapper, userId, start, end);
+		
+		return accountList;
+	}
+	
+	public boolean insertAccountBook(AccountBookDTO record) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("insert into account_book ");
+		sql.append("(DATE, CATEGORY, DESCRIPTION, AMOUNT, TYPE, USERID, REGDATE) ");
+		sql.append("values(?, ?, ?, ?, ?, ?, now()) ");
+
+		int result = jdbcTemplate.update(sql.toString()
+				, record.getDate()
+				, record.getCategory()
+				, record.getDescription()
+				, record.getAmount()
+				, record.getType()
+				, record.getUserid());
+		
+		return result > 0 ? true : false;
+	}
+
+	public AccountBookDTO save(AccountBookDTO record) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public AccountBookDTO findByIdx(Long idx) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select IDX, DATE, CATEGORY, DESCRIPTION, AMOUNT ");
+		sql.append(", case when type = 'INCOME' then '수입' when type = 'EXPENSE' then '지출' end as TYPE ");
+		sql.append(", USERID, REGDATE from ACCOUNT_BOOK where 1=1 ");
+		sql.append(" and IDX = ?");
+		
+		List<AccountBookDTO> accountList = jdbcTemplate.query(sql.toString(), rowMapper, idx);
+		
+		return accountList.isEmpty() ? null : accountList.get(0);
+	}
+
+	public boolean deleteByIdx(Long idx) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("delete from ACCOUNT_BOOK where 1=1 ");
+		sql.append(" and IDX = ?");
+		
+		int result = jdbcTemplate.update(sql.toString(), idx);
+		
+		return result > 0 ? true : false;
+	}
+
+}

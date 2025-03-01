@@ -1,0 +1,62 @@
+package com.kosmo.mycalender.user.repository;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
+
+import com.kosmo.mycalender.user.dto.UserDTO;
+
+@Repository
+public class UserDAO {
+	private JdbcTemplate jdbcTemplate;
+	private RowMapper<UserDTO> userRowMapper = 
+			new RowMapper<UserDTO>() {
+				@Override
+				public UserDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+					UserDTO user = new UserDTO(
+							rs.getString("USERID"), 
+							rs.getString("PASSWORD"),
+							rs.getString("NAME"),
+							rs.getTimestamp("REGDATE").toLocalDateTime());
+					user.setUserIdx(rs.getLong("USERIDX"));
+					return user;
+				}
+			};
+			
+	public UserDAO(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+			
+	public UserDTO selectByUserId(String userId) {
+		List<UserDTO> result = jdbcTemplate.query("select * from USER where USERID = ?", userRowMapper, userId);
+		return result.isEmpty() ? null : result.get(0);
+	}
+	
+	public void insert(final UserDTO user) {
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		jdbcTemplate.update((Connection con) -> {
+			PreparedStatement pstmt = con.prepareStatement(
+					"insert into USER (USERID, PASSWORD, NAME, REGDATE)" + "values(?, ?, ?, ?)",
+					new String[] { "USERID" });
+			pstmt.setString(1, user.getUserId());
+			pstmt.setString(2, user.getPassword());
+			pstmt.setString(3, user.getName());
+			pstmt.setTimestamp(4, Timestamp.valueOf(user.getRegDate()));
+			return pstmt;
+
+		}, keyHolder);
+		Number keyValue = keyHolder.getKey();
+		user.setUserIdx(keyValue.longValue());
+	}
+}

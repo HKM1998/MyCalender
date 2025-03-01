@@ -1,0 +1,27 @@
+package com.kosmo.mycalender.user.service;
+
+import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kosmo.mycalender.common.exception.DuplicateUserException;
+import com.kosmo.mycalender.user.dto.UserDTO;
+import com.kosmo.mycalender.user.dto.UserRegistRequestDTO;
+import com.kosmo.mycalender.user.repository.UserDAO;
+
+@Service
+public class UserRegistService {
+	@Autowired
+	private UserDAO UserDAO;
+	
+	public Long regist(UserRegistRequestDTO req) {
+		UserDTO member = UserDAO.selectByUserId(req.getUserId());
+		if(member != null) {
+			throw new DuplicateUserException("dup UserId " + req.getUserId());
+		}
+		UserDTO newUser = new UserDTO(req.getUserId(), req.getPassword(), req.getName(), LocalDateTime.now());
+		UserDAO.insert(newUser);
+		return newUser.getUserIdx();
+	}
+}

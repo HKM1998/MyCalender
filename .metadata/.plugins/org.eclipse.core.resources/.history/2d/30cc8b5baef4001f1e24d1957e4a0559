@@ -1,0 +1,89 @@
+package com.kosmo.mycalender.account.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.kosmo.mycalender.account.dto.AccountBookDTO;
+import com.kosmo.mycalender.account.dto.CalenderEventDTO;
+import com.kosmo.mycalender.account.service.AccountBookService;
+import com.kosmo.mycalender.account.service.CalenderEventService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
+@RestController
+@RequestMapping("/api/records")
+public class AccountBookAPIController {
+	@Autowired
+	private AccountBookService accountBookService;
+	@Autowired
+	private CalenderEventService calenderEventService;
+	
+	@GetMapping
+	public List<AccountBookDTO> getRecords(@RequestParam(value = "start", required = false) String start
+			, @RequestParam(value = "end", required = false) String end
+			, HttpServletRequest request){
+		HttpSession session = request.getSession();
+		String userId = (String) session.getAttribute("userId");
+		
+		List<AccountBookDTO> records;
+		records = accountBookService.getRecordsByDateTerm(start, end, userId);
+		return records;
+	}
+	
+
+	@GetMapping("{date}")
+	public List<AccountBookDTO> getDateRecords(@PathVariable("date") String date, HttpServletRequest request){
+		List<AccountBookDTO> records;
+		HttpSession session = request.getSession();
+		String userId = (String) session.getAttribute("userId");
+		
+		records = accountBookService.getRecordsByDate(date, userId);
+		return records;
+	}
+	
+	@PostMapping
+	public String addRecord(@RequestBody AccountBookDTO accountBookDTO, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		String userId = (String) session.getAttribute("userId");
+		
+		accountBookDTO.setUserid(userId);
+		accountBookService.addRecord(accountBookDTO);
+		
+		return "정상처리";
+	}
+	
+	@DeleteMapping("{idx}")
+	public String deleteRecord(@PathVariable("idx") Long idx) {
+		accountBookService.deleteRecord(idx);
+		
+		return "정상처리";
+	}
+	
+	@GetMapping("/events")
+	public List<CalenderEventDTO> getEvents(HttpServletRequest request){
+		List<CalenderEventDTO> events;
+		HttpSession session = request.getSession();
+		String userId = (String) session.getAttribute("userId");
+		
+		events = calenderEventService.getEvents(userId);
+		return events;
+	}
+
+	@PutMapping("{idx}")
+	public String updateRecord(@PathVariable("idx") Long idx) {
+		accountBookService.deleteRecord(idx);
+		
+		return "정상처리";
+	}
+}

@@ -1,0 +1,19 @@
+package com.kosmo.mycalender.account.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kosmo.mycalender.account.dto.CalenderEventDTO;
+import com.kosmo.mycalender.account.repository.CalenderEventDAO;
+
+@Service
+public class CalenderEventService {
+	@Autowired
+	private CalenderEventDAO calenderEventDAO;
+	
+	public List<CalenderEventDTO> getEvents(){
+		return calenderEventDAO.getEvents();
+	}
+}

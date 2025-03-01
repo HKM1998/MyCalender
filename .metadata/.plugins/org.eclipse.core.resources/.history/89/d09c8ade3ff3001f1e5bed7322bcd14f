@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>로그인</title>
+</head>
+<body>
+	<form th:object="${loginCommandDto}" method="post">
+		<p>
+			<label>
+				아이디
+				<input type="text" id="userId" th:field="*{userId}"/>
+	<!-- 			<form:errors path="email" /> -->
+			</label>
+		</p>
+		<p>
+			<label>
+				비밀번호
+				<input type="password" id="password" th:field="*{password}"/>
+	<!-- 			<form:errors path="password" /> -->
+			</label>
+		</p>
+		<p>
+			<label>
+				아이디 기억하기
+				<input type="checkbox" th:field="*{rememberId}" />
+			</label>
+		</p>
+		<input type="submit" value="로그인하기">
+	</form>
+</body>
+</html>

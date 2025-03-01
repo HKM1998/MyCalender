@@ -1,0 +1,17 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+</head>
+<body>
+	<p>
+		<span>${userId}님 (${name}), 회원가입을 완료했습니다.</span>
+	</p>
+	<p>
+		<a onclick="location.href='/accountbook'">[메인으로 이동]</a>
+	</p>
+</body>
+</html>

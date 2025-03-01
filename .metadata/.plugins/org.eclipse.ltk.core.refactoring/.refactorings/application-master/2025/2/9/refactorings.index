@@ -1,0 +1,35 @@
+1740369635223	Move compilation unit
+1740369639982	Delete element
+1740369649387	Move compilation unit
+1740369721656	Copy compilation unit
+1740369774228	Rename type 'ApplicationMasterApplication'
+1740369826755	Move 'calender.jsp' to 'calender'
+1740369834785	Rename resource 'calender.jsp'
+1740370838105	Rename compilation unit 'AccountService.java'
+1740370897821	Move compilation unit
+1740370928193	Rename package 'com.kosmo.mycalender.account.Service'
+1740377416827	Rename field 'repository'
+1740380160447	Rename local variable 'repository'
+1740388035676	Delete element
+1740444184040	Rename method 'getRecordsByDate'
+1740444231025	Rename method 'findByDate'
+1740451308895	Rename type 'UserDao'
+1740451313477	Rename type 'UserDto'
+1740451316652	Rename type 'UserDTo'
+1740455961688	Rename type 'UserAuthInfoDto'
+1740456052410	Rename type 'UserRegistRequestDto'
+1740456080351	Rename type 'LoginCommandDto'
+1740461463352	Rename method 'submit'
+1740461533192	Delete element
+1740461535498	Delete element
+1740462355602	Rename local variable 'LoginCommandDTO'
+1740462456311	Rename local variable 'LoginCommandDTO'
+1740463477157	Rename local variable 'UserAuthInfoDTO'
+1740464111393	Delete element
+1740465211351	Rename resource 'register1.jsp'
+1740465277126	Rename resource 'step1.jsp'
+1740465755497	Delete elements
+1740465973696	Rename local variable 'UserRegistRequestDTO'
+1740467784594	Rename type 'RegisterRequestValidator'
+1740626950258	Delete element
+1740642861404	Delete element

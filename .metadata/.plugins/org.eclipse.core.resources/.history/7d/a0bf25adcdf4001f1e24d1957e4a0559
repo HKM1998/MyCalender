@@ -1,0 +1,13 @@
+package com.kosmo.mycalender.account.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kosmo.mycalender.account.repository.AccountBookDAO;
+
+@Service
+public class AccountTotalService {
+	@Autowired
+	private AccountBookDAO dao;
+	
+}

@@ -1,0 +1,5 @@
+package com.kosmo.mycalender.common.config;
+
+public class MyCalenderWebConfig {
+
+}

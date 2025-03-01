@@ -1,0 +1,14 @@
+package com.kosmo.mycalender.common.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class MyCalenderWebConfig implements WebMvcConfigurer {
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		// /img/ 로 시작하는 리소스 인 경우 파일 경로를 application.properties 의 img 경로와 연결
+		registry.addResourceHandler("/logo/**").addResourceLocations("classpath:/static/img/");
+	}
+}

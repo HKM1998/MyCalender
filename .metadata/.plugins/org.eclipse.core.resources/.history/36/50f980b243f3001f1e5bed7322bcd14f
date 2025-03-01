@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+</head>
+<body>
+	<h2>회원정보</h2>
+	<form th:action="@{/register/step3}" th:object="${userRegistRequestDto}" method="post">
+		<p>
+			<label>아이디<br>
+				<input type="text" id="userId" th:field="*{userId}"/>
+<!-- 				<span th:if="${userRegistRequestDto.hasErrors('userId')}">올바른 아이디 형식이 아닙니다.</span> -->
+			</label>
+		</p>
+		<p>
+			<label>이름<br>
+				<input type="text" id="name" th:field="*{name}"/>
+<!-- 				<span th:if="${userRegistRequestDto.hasErrors('userName')}">올바른 이름 형식이 아닙니다.</span> -->
+			</label>
+		</p>
+		<p>
+			<label>비밀번호<br>
+				<input type="password" id="password" th:field="*{password}"/>
+<!-- 				<span th:if="${userRegistRequestDto.hasErrors('password')}">올바른 비밀번호 형식이 아닙니다.</span> -->
+			</label>
+		</p>
+		<p>
+			<label>비밀번호 확인<br>
+				<input type="password" id="confirmPassword" th:field="*{confirmPassword}"/>
+<!-- 				<span th:if="${userRegistRequestDto.hasErrors('confirmPassword')}">올바른 비밀번호 형식이 아닙니다.</span> -->
+			</label>
+		</p>
+		<input type="submit" value="가입 완료">
+	</form>
+</body>
+</html>

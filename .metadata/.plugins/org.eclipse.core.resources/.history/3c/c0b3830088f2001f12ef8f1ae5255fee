@@ -1,0 +1,5 @@
+package com.kosmo.mycalender.account.controller;
+
+public class AccountWebController {
+
+}

@@ -1,0 +1,28 @@
+package com.kosmo.mycalender.account.dto;
+
+import java.util.Date;
+
+public class CalenderEventDTO {
+	private Date date;
+	private String title;
+	private String color;
+	
+	public Date getDate() {
+		return date;
+	}
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
+	}
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+}

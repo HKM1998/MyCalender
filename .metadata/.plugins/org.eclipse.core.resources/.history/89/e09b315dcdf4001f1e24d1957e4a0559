@@ -1,0 +1,49 @@
+package com.kosmo.mycalender.account.repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import com.kosmo.mycalender.account.dto.AccountTotalDTO;
+
+@Repository
+public class AccountTotalDAO {
+	private JdbcTemplate jdbcTemplate;
+	private RowMapper<AccountTotalDTO> rowMapper = 
+			new RowMapper<AccountTotalDTO>() {
+				
+				@Override
+				public AccountTotalDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+					AccountTotalDTO accBook = new AccountTotalDTO(
+							rs.getString("type"),
+							rs.getBigDecimal("totalamount"),
+							rs.getLong("count"));
+					return accBook;
+				}
+			};
+	
+	public AccountTotalDAO(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource); 
+	}
+	
+	public List<AccountTotalDTO> getTotal(String userid){
+		List<AccountTotalDTO> listTotal = new ArrayList<AccountTotalDTO>();
+		StringBuilder sql = new StringBuilder();
+		sql.append("select TYPE, sum(AMOUNT) as TOTALAMOUNT, count(IDX) as COUNT ");
+		sql.append("from ACCOUNT_BOOK where 1=1 ");
+		sql.append("and USERID = ? ");
+		
+		sql.append("group by TYPE ");
+		sql.append("order by TYPE; ");
+		
+		
+		return listTotal;
+	}
+}

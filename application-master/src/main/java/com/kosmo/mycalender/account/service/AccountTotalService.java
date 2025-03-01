@@ -1,0 +1,47 @@
+package com.kosmo.mycalender.account.service;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kosmo.mycalender.account.dto.AccountTotalDTO;
+import com.kosmo.mycalender.account.repository.AccountTotalDAO;
+
+
+@Service
+public class AccountTotalService {
+	@Autowired
+	private AccountTotalDAO dao;
+	
+	public List<AccountTotalDTO> getTotal(String userid){
+		List<AccountTotalDTO> list = dao.getTotal(userid);
+		setTotalSum(list);
+		
+		return list;
+	}
+	
+	public List<AccountTotalDTO> getTotalByDate(String date, String userid){
+    	LocalDate selectDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+		List<AccountTotalDTO> list = dao.getTotalByDate(selectDate, userid);
+		setTotalSum(list);
+		
+		return list;
+	}
+	
+	private void setTotalSum(List<AccountTotalDTO> list) {
+		// 수입 지출 둘다 없는 경우 합계 추가 안함
+		if(list.size() < 2) {
+			return;
+		}
+		
+		BigDecimal totalAmount = list.get(0).getTotalAmount().add(list.get(1).getTotalAmount().negate());
+		Long totalCount = list.get(0).getCount() + list.get(1).getCount();
+		AccountTotalDTO sum = new AccountTotalDTO("총 합계", totalAmount, totalCount);
+		
+		list.add(sum);
+	}
+}

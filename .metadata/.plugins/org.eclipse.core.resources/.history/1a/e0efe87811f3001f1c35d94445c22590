@@ -1,0 +1,46 @@
+package com.kosmo.mycalender.account.service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kosmo.mycalender.account.dto.AccountBookDTO;
+import com.kosmo.mycalender.account.repository.AccountBookDAO;
+
+@Service
+public class AccountBookService {
+    @Autowired
+    private AccountBookDAO accountBookDAO;
+
+    public List<AccountBookDTO> getAllRecords() {
+        return accountBookDAO.findAll();
+    }
+
+    public List<AccountBookDTO> getRecordsByDate(String start, String end) {
+    	LocalDate startDate = LocalDate.parse(start, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    	LocalDate endDate = LocalDate.parse(end, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    	
+        return accountBookDAO.findByDate(startDate, endDate);
+    }
+
+    public AccountBookDTO saveRecord(AccountBookDTO record) {
+        return accountBookDAO.save(record);
+    }
+
+    public void updateRecord(Long id, AccountBookDTO updatedRecord) {
+//        return accountBookDAO.findById(id).map(record -> {
+//            record.setCategory(updatedRecord.getCategory());
+//            record.setDescription(updatedRecord.getDescription());
+//            record.setAmount(updatedRecord.getAmount());
+//            record.setType(updatedRecord.getType());
+//            return accountBookDAO.save(record);
+//        }).orElseThrow(() -> new RuntimeException("Record not found"));
+    }
+
+    public void deleteRecord(Long idx) {
+        accountBookDAO.deleteByIdx(idx);
+    }
+}

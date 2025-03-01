@@ -1,0 +1,40 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>회원가입</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container justify-content-center position-absolute top-50 start-50 w-50 translate-middle border border-dark-emphasis rounded-4">
+		<h2 class="mt-3">회원정보</h2>
+		<form method="post">
+			<div class="mx-auto p-2 ">
+				<div class="input-group mb-3 ">
+		  			<label class="input-group-text" style="width:130px;" id="basic-addon1">아이디</label>
+					<input type="text" class="form-control" id="userId" name="userId"/>
+				</div>
+				<div class="input-group mb-3">
+		  			<label class="input-group-text text-center" style="width:130px;" id="basic-addon1">이름</label>
+					<input type="text" class="form-control" id="name" name="name"/>
+				</div>
+				<div class="input-group mb-3">
+		  			<label class="input-group-text text-center" style="width:130px;" id="basic-addon1">비밀번호</label>
+					<input type="password" class="form-control" id="password" name="password"/>
+				</div>
+				<div class="input-group mb-3">
+		  			<label class="input-group-text" style="width:130px;" id="basic-addon1">비밀번호 확인</label>
+					<input type="password" class="form-control" id="confirmPassword" name="confirmPassword"/>
+				</div>
+				<div class="input-group mb-3">
+					<input type="submit" class="btn btn-primary" value="가입 완료">
+					<button type="button" class="btn btn-outline-secondary" onclick="location.href='/login'">취소</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

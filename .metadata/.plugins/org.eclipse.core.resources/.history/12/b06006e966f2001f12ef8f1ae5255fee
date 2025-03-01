@@ -1,0 +1,38 @@
+package com.kosmo.mycalender.account.Service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class AccountBookService {
+    private final AccountBookRepository repository;
+
+    public AccountBookService(AccountBookRepository repository) {
+        this.repository = repository;
+    }
+
+    public List<AccountBook> getAllRecords() {
+        return repository.findAll();
+    }
+
+    public List<AccountBook> getRecordsByDate(LocalDate date) {
+        return repository.findByDate(date);
+    }
+
+    public AccountBook saveRecord(AccountBook record) {
+        return repository.save(record);
+    }
+
+    public AccountBook updateRecord(Long id, AccountBook updatedRecord) {
+        return repository.findById(id).map(record -> {
+            record.setCategory(updatedRecord.getCategory());
+            record.setDescription(updatedRecord.getDescription());
+            record.setAmount(updatedRecord.getAmount());
+            record.setType(updatedRecord.getType());
+            return repository.save(record);
+        }).orElseThrow(() -> new RuntimeException("Record not found"));
+    }
+
+    public void deleteRecord(Long id) {
+        repository.deleteById(id);
+    }
+}

@@ -1,0 +1,8 @@
+package com.kosmo.mycalender.account.repository;
+
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class AccountTotalDAO {
+	
+}

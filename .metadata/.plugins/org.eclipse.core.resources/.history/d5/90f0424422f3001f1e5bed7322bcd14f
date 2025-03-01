@@ -1,0 +1,5 @@
+package com.kosmo.mycalender.user.repository;
+
+public class UserDAO {
+
+}

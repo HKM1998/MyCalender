@@ -1,0 +1,58 @@
+package com.kosmo.mycalender.account.service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kosmo.mycalender.account.dto.AccountBookDTO;
+import com.kosmo.mycalender.account.repository.AccountBookDAO;
+
+@Service
+public class AccountBookService {
+    @Autowired
+    private AccountBookDAO accountBookDAO;
+
+    public List<AccountBookDTO> getAllRecords(String userId) {
+        return accountBookDAO.findAll(userId);
+    }
+
+
+    public List<AccountBookDTO> getRecordsByDate(String date, String userId) {
+    	LocalDate selectDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE); // ISO_LOCAL_DATE : '2023-08-15' 
+    	
+        return accountBookDAO.findByDate(selectDate, userId);
+    }
+    
+    public List<AccountBookDTO> getRecordsByDateTerm(String start, String end, String userId) {
+    	LocalDate startDate = LocalDate.parse(start, DateTimeFormatter.ISO_OFFSET_DATE_TIME);  // ISO_OFFSET_DATE_TIME : '2023-08-15T10:15:30+01:00'
+    	LocalDate endDate = LocalDate.parse(end, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    	
+        return accountBookDAO.findByDateTerm(startDate, endDate, userId);
+    }
+
+    public void addRecord(AccountBookDTO record) {
+    	record.setUserid(userId);
+        accountBookDAO.insertAccountBook(record);
+    }
+
+    public AccountBookDTO saveRecord(AccountBookDTO record) {
+        return accountBookDAO.save(record);
+    }
+
+    public void updateRecord(Long id, AccountBookDTO updatedRecord) {
+//        return accountBookDAO.findById(id).map(record -> {
+//            record.setCategory(updatedRecord.getCategory());
+//            record.setDescription(updatedRecord.getDescription());
+//            record.setAmount(updatedRecord.getAmount());
+//            record.setType(updatedRecord.getType());
+//            return accountBookDAO.save(record);
+//        }).orElseThrow(() -> new RuntimeException("Record not found"));
+    }
+
+    public void deleteRecord(Long idx) {
+        accountBookDAO.deleteByIdx(idx);
+    }
+}

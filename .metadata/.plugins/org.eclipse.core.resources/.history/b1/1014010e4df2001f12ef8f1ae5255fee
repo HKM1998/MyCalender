@@ -1,0 +1,5 @@
+package com.kosmo.mycalender.config;
+
+public class DBConfig {
+
+}

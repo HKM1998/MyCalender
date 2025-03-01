@@ -1,0 +1,91 @@
+package com.kosmo.mycalender.account.repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import com.kosmo.mycalender.account.dto.AccountBookDTO;
+
+@Repository
+public class AccountBookDAO {
+	private JdbcTemplate jdbcTemplate;
+	private RowMapper<AccountBookDTO> rowMapper = 
+			new RowMapper<AccountBookDTO>() {
+				
+				@Override
+				public AccountBookDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+					AccountBookDTO accBook = new AccountBookDTO();
+					accBook.setIdx(rs.getLong("idx"));
+					accBook.setDate(rs.getDate("date"));
+					accBook.setCategory(rs.getString("category"));
+					accBook.setDescription(rs.getString("description"));
+					accBook.setAmount(rs.getBigDecimal("amount"));
+					accBook.setType(rs.getString("type"));
+					accBook.setUserid(rs.getString("userid"));
+					accBook.setRegdate(rs.getString("regdate"));
+					return accBook;
+				}
+			};
+	
+	public AccountBookDAO(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+	
+	public List<AccountBookDTO> findAll() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select IDX, DATE, CATEGORY, DESCRIPTION, AMOUNT, TYPE, USERID, REGDATE from ACCOUNT_BOOK where 1=1 ");
+
+		List<AccountBookDTO> accountList = jdbcTemplate.query(sql.toString(), rowMapper);
+		
+		return accountList;
+	}
+	
+	public List<AccountBookDTO> findByDate(LocalDate date) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select IDX, DATE, CATEGORY, DESCRIPTION, AMOUNT, TYPE, USERID, REGDATE from ACCOUNT_BOOK where 1=1 ");
+		sql.append("and DATE = ? ");
+		
+		List<AccountBookDTO> accountList = jdbcTemplate.query(sql.toString(), rowMapper, date);
+		
+		return accountList;
+	}
+
+	public List<AccountBookDTO> findByDateTerm(LocalDate start, LocalDate end) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select IDX, DATE, CATEGORY, DESCRIPTION, AMOUNT, TYPE, USERID, REGDATE from ACCOUNT_BOOK where 1=1 ");
+		sql.append("and DATE between ? and ? ");
+		
+		List<AccountBookDTO> accountList = jdbcTemplate.query(sql.toString(), rowMapper, start, end);
+		
+		return accountList;
+	}
+
+	public AccountBookDTO save(AccountBookDTO record) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public AccountBookDTO findByIdx(Long idx) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select IDX, DATE, CATEGORY, DESCRIPTION, AMOUNT, TYPE, USERID, REGDATE from ACCOUNT_BOOK where 1=1 ");
+		sql.append(" and IDX = ?");
+		
+		return null;
+	}
+
+	public void deleteByIdx(Long idx) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("delete from ACCOUNT_BOOK where 1=1 ");
+		sql.append(" and IDX = ?");
+		
+		jdbcTemplate.execute(sql.toString());
+	}
+
+}

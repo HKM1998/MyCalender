@@ -1,0 +1,63 @@
+package user.controller;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import exception.WrongIdPasswordException;
+import user.dto.LoginCommandDto;
+import user.dto.UserAuthInfoDto;
+import user.service.UserAuthService;
+
+@Controller
+@RequestMapping("/login")
+public class LoginController {
+	private UserAuthService userAuthService;
+
+	public void setUserAuthService(UserAuthService userAuthService) {
+		this.userAuthService = userAuthService;
+	}
+	
+	@GetMapping
+	public String form(LoginCommandDto loginCommandDto, @CookieValue(value = "REMEMBER", required = false) Cookie rCookie) { // required 를 false 로 설정하지 않으면 쿠키 없을때 익셉션
+		if(rCookie != null) {
+			loginCommandDto.setUserId(rCookie.getValue());
+			loginCommandDto.setRememberId(true);
+		}
+		return "login/loginForm";
+	}
+	
+	@PostMapping
+	public String submit(LoginCommandDto loginCommandDto, Errors errors, HttpSession session, HttpServletResponse response) {
+		new LoginCommandValidator().validate(loginCommandDto, errors);
+		if(errors.hasErrors()) {
+			return "login/loginFrom";
+		}
+		try {
+			UserAuthInfoDto userAuthInfoDto = userAuthService.authenticate(loginCommandDto.getUserId(), loginCommandDto.getPassword());
+			session.setAttribute("userAuthInfoDto", userAuthInfoDto);
+			
+			Cookie rememberCookie = new Cookie("REMEMBER", loginCommandDto.getUserId());
+			rememberCookie.setPath("/");
+			if(loginCommandDto.isRememberId()) {
+				rememberCookie.setMaxAge(60 * 60 * 24 * 30);
+			} else {
+				rememberCookie.setMaxAge(0);
+			}
+			response.addCookie(rememberCookie);
+			
+			return "main";
+		} catch (WrongIdPasswordException e) {
+			errors.reject("idPasswordNotMatching");
+			
+			return "login/loginForm";
+		}
+	}
+}

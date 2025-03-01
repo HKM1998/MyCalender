@@ -1,0 +1,38 @@
+package com.kosmo.mycalender.account.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kosmo.mycalender.account.dto.AccountBookDTO;
+import com.kosmo.mycalender.account.service.AccountBookService;
+
+@Controller
+@RequestMapping("/accountbook")
+public class AccountWebController {
+
+	@Autowired
+	private AccountBookService accountBookService;
+	
+	public AccountWebController(AccountBookService accountBookService) {
+		this.accountBookService = accountBookService;
+	}
+	
+	@GetMapping
+	public String getAccountBook(Model m) {
+		List<AccountBookDTO> accountBookDTOs;
+		
+		try {
+			accountBookDTOs = accountBookService.getAllRecords();
+			m.addAttribute("records", accountBookDTOs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "/calender/calender_main";
+	}
+}
